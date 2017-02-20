@@ -11,6 +11,8 @@
     "config-multipaas": "^0.2.2",
     "router": "^1.1.4",
     "send": "^0.13.2",
+    "express": "^4.14.1",
+    "parse-dashboard": "^1.0.24",
     "serve-static": "^1.10.2",
     "finalhandler": "^0.4.1"
   },
