@@ -1,29 +1,58 @@
+/*
 var cc       = require('config-multipaas'),
     finalhandler= require('finalhandler'),
     http     = require("http"),
     Router       = require('router'),
     fs = require('fs'),
     serveStatic       = require("serve-static");
+*/
+var cc = require('config-multipaas');
+var finalhandler= require('finalhandler');
+var http = require("http");
+var serveStatic  = require("serve-static");
 
+var express = require('express');
+var ParseDashboard = require('parse-dashboard');
+
+var configParse = {
+  "apps": [
+    {
+      "serverURL": "http://parse-siconv.getup.io/parse",
+      "appId": "appId",
+      "masterKey": "masterKey",
+      "appName": "openshift"
+    }
+  ],
+"trustProxy": 1,
+"users": [
+{
+      "user":"admin",
+      "pass":"mba123",
+      "masterkey":"masterKey",
+      "apps":[{
+        "appId":"appId"
+        }]
+    }
+  ]
+};
+
+var dashboard = new ParseDashboard(configParse, true);
+
+/*
 var config   = cc();
 var app      = Router()
 
 // Serve up public/ftp folder 
 app.use(serveStatic('static'))
+*/
 
-// Routes
-app.get("/status", function (req, res) {
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'application/json; charset=utf-8')
-  res.end("{status: 'ok'}\n")
-})
+var config   = cc();
+var app = express();
 
-app.get("/", function (req, res) {
-  var index = fs.readFileSync(__dirname + '/index.html')
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'text/html; charset=utf-8')
-  res.end(index.toString())
-})
+app.use('/dashboard/', dashboard);
+
+// Serve up public/ftp folder 
+app.use(serveStatic('static'))
 
 // Create server 
 var server = http.createServer(function(req, res){
