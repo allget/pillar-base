@@ -13,7 +13,7 @@ var serveStatic  = require("serve-static");
 
 var express = require('express');
 var ParseDashboard = require('parse-dashboard');
-
+var bodyParser = require('body-parser');
 var configParse = {
   "apps": [
     {
@@ -48,6 +48,47 @@ app.use(serveStatic('static'))
 
 var config   = cc();
 var app = express();
+app.use(bodyParser.urlencoded({ extended: false }))
+ 
+// parse application/json 
+app.use(bodyParser.json())
+
+process.env.SERVER_URL = "http://parse-siconv.getup.io/parse"
+process.env.APP_ID = "appId";
+process.env.MASTER_KEY = "masterKey";
+
+var ParseRest = require('parse-rest-nodejs').default;
+
+//Autenticacao
+app.get('/auth',function(req, res){
+  console.log('req==',req.body);
+  var parseRest = new ParseRest(req);
+  
+    parseRest.get('/login', { username:'foo', password:'ba' }, { 'X-Parse-Revocable-Session': 1 }).then((success) => {
+    console.log('sucess');
+    console.log(success);
+  }, (error) => {
+    console.log('error==');
+    console.error(error);
+  });
+});
+
+app.get('/leva', function (req, res) {
+  var parseRest = new ParseRest(req);
+  console.log('leva==');
+  parseRest.get('/classes/Programas').then((success) => {
+    console.log('sucess');
+  console.log(success);
+  }, (error) => {
+    console.log('error==');
+  console.error(error);
+  });
+  res.send('Hello World!');
+});
+
+app.get('/get',function(req, res){
+  
+});
 
 app.use('/dashboard/', dashboard);
 
